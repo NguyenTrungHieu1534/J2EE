@@ -3,17 +3,17 @@ package BookManagementMenu;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Book {
+public class BT1 {
 
     private int id;
     private String title;
     private String author;
     private double price;
 
-    public Book() {
+    public BT1() {
     }
 
-    public Book(int id, String title, String author, double price) {
+    public BT1(int id, String title, String author, double price) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -74,7 +74,7 @@ public class Book {
     }
     public static void main(String[] args) {
 
-        List<Book> listBook = new ArrayList<>();
+        List<BT1> listBook = new ArrayList<>();
         Scanner x = new Scanner(System.in);
 
         String menu = """
@@ -100,7 +100,7 @@ public class Book {
 
             switch (chon) {
                 case 1 -> {
-                    Book b = new Book();
+                    BT1 b = new BT1();
                     b.input(x);
                     listBook.add(b);
                     System.out.println("Thêm sách thành công!");
@@ -109,7 +109,7 @@ public class Book {
                     System.out.print("Nhập mã sách cần xóa: ");
                     int id = Integer.parseInt(x.nextLine());
 
-                    Book find = listBook.stream()
+                    BT1 find = listBook.stream()
                             .filter(b -> b.getId() == id)
                             .findFirst()
                             .orElse(null);
@@ -125,7 +125,7 @@ public class Book {
                     System.out.print("Nhập mã sách cần chỉnh sửa: ");
                     int id = Integer.parseInt(x.nextLine());
 
-                    Book find = listBook.stream()
+                    BT1 find = listBook.stream()
                             .filter(b -> b.getId() == id)
                             .findFirst()
                             .orElse(null);
@@ -143,13 +143,13 @@ public class Book {
                     if (listBook.isEmpty()) {
                         System.out.println("(Danh sách rỗng)");
                     } else {
-                        listBook.forEach(Book::output);
+                        listBook.forEach(BT1::output);
                     }
                 }
                 case 5 -> {
                     listBook.stream()
                             .filter(b -> b.getTitle().toLowerCase().contains("lập trình"))
-                            .forEach(Book::output);
+                            .forEach(BT1::output);
                 }
                 case 6 -> {
                     System.out.print("Nhập số lượng sách cần lấy: ");
@@ -158,7 +158,7 @@ public class Book {
                     listBook.stream()
                             .sorted((b1, b2) -> Double.compare(b2.getPrice(), b1.getPrice()))
                             .limit(n)
-                            .forEach(Book::output);
+                            .forEach(BT1::output);
                 }
                 case 7 -> {
                     System.out.print("Nhập tên tác giả: ");
@@ -171,7 +171,7 @@ public class Book {
 
                     listBook.stream()
                             .filter(b -> authorSet.contains(b.getAuthor().toLowerCase()))
-                            .forEach(Book::output);
+                            .forEach(BT1::output);
                 }
 
                 case 0 -> System.out.println("Thoát chương trình!");
