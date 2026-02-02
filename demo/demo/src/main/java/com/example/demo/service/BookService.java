@@ -12,6 +12,12 @@ public class BookService {
 
     private List<Book> books = new ArrayList<>();
 
+    public BookService() {
+        // Initialize with sample books matching the image
+        books.add(new Book(1, "Spring boot", "Huy Cuong"));
+        books.add(new Book(2, "Spring Boot V2", "Anh"));
+    }
+
     public List<Book> getAllBooks() {
         return books;
     }
