@@ -9,11 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -26,88 +22,109 @@ public class ProductController {
     @Autowired
     private CategoryService categoryService;
 
+    // ── List ──────────────────────────────────────────────────────────────
     @GetMapping()
-    public String Index(Model model) {
+    public String index(Model model) {
         model.addAttribute("listproduct", productService.getAll());
-        return "product";
+        return "product/list";
     }
 
-    @GetMapping("/create")
-    public String Create(Model model) {
+    // ── Add (form) ────────────────────────────────────────────────────────
+    @GetMapping("/add")
+    public String add(Model model) {
         model.addAttribute("product", new Product());
         model.addAttribute("categories", categoryService.getAll());
-        return "create";
+        return "product/add";
     }
 
-    @PostMapping("/create")
-    public String Create(
-            @Valid Product newProduct,
+    // ── Add (save) ────────────────────────────────────────────────────────
+    @PostMapping("/add")
+    public String save(
+            @Valid @ModelAttribute("product") Product newProduct,
             BindingResult result,
-            @RequestParam("category-id") int categoryId,
+            @RequestParam("category-id") Long categoryId,
             @RequestParam("imageProduct") MultipartFile imageProduct,
             Model model) {
 
         if (result.hasErrors()) {
-            model.addAttribute("product", newProduct);
             model.addAttribute("categories", categoryService.getAll());
-            return "create";
+            return "product/add";
         }
 
-        // Xử lý ảnh
-        productService.updateImage(newProduct, imageProduct);
+        if (imageProduct != null && !imageProduct.isEmpty()) {
+            productService.updateImage(newProduct, imageProduct);
+        }
 
         Category selectedCategory = categoryService.get(categoryId);
         newProduct.setCategory(selectedCategory);
 
         productService.add(newProduct);
-
         return "redirect:/products";
     }
 
+    // ── Edit (form) ───────────────────────────────────────────────────────
     @GetMapping("/edit/{id}")
-    public String Edit(@PathVariable int id, Model model) {
+    public String edit(@PathVariable Long id, Model model) {
         Product find = productService.get(id);
         if (find == null) {
             return "redirect:/products";
         }
-
         model.addAttribute("product", find);
         model.addAttribute("categories", categoryService.getAll());
         return "edit";
     }
 
+    // ── Edit (save) ── ĐÃ FIX LỖI KHÔNG UPDATE ──────────────────────────
     @PostMapping("/edit")
-    public String Edit(
-            @Valid Product editProduct,
+    public String edit(
+            @Valid @ModelAttribute("product") Product editProduct,
             BindingResult result,
-            @RequestParam(value = "category-id", required = false) Integer categoryId,
+            @RequestParam(value = "category-id", required = false) Long categoryId,
             @RequestParam(value = "imageProduct", required = false) MultipartFile imageProduct,
             Model model) {
 
+        // 1. In lỗi ra Console nếu có (Để bạn biết tại sao nó không thèm Save)
         if (result.hasErrors()) {
-            model.addAttribute("product", editProduct);
+            System.out.println(">>> LỖI VALIDATION KHI EDIT:");
+            result.getAllErrors().forEach(err -> System.out.println("- " + err.getDefaultMessage()));
+
             model.addAttribute("categories", categoryService.getAll());
             return "edit";
         }
 
+        // 2. Xử lý Category
         if (categoryId != null) {
             Category selectedCategory = categoryService.get(categoryId);
-            if (selectedCategory != null) {
-                editProduct.setCategory(selectedCategory);
-            }
+            editProduct.setCategory(selectedCategory);
         }
 
+        // 3. Xử lý Image: Nếu không chọn ảnh mới, phải lấy lại tên ảnh cũ
         if (imageProduct != null && !imageProduct.isEmpty()) {
             productService.updateImage(editProduct, imageProduct);
         } else {
-            Product existing = productService.get(editProduct.getId());
-            if (existing != null && existing.getImage() != null) {
-                editProduct.setImage(existing.getImage());
+            // Lấy lại ảnh cũ từ database dựa trên ID gửi từ form lên
+            Product existingProduct = productService.get(editProduct.getId());
+            if (existingProduct != null) {
+                editProduct.setImage(existingProduct.getImage());
             }
         }
 
+        // 4. Thực hiện Update
+        System.out.println(">>> ĐANG THỰC HIỆN UPDATE CHO ID: " + editProduct.getId());
         productService.update(editProduct);
 
         return "redirect:/products";
+    }
+
+    // ── Delete ────────────────────────────────────────────────────────────
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        productService.delete(id);
+        return "redirect:/products";
+    }
+
+    @GetMapping("/create")
+    public String createRedirect() {
+        return "redirect:/products/add";
     }
 }
