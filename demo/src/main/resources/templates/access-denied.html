@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Không có quyền truy cập</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            font-family: 'Segoe UI', sans-serif;
+            color: #fff;
+        }
+        .card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 48px 56px;
+            max-width: 480px;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .icon { font-size: 64px; margin-bottom: 20px; }
+        h1 { font-size: 1.8rem; margin-bottom: 12px; color: #f87171; }
+        p  { font-size: 1rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 32px; }
+        a {
+            display: inline-block;
+            background: #3b82f6;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        a:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">🚫</div>
+        <h1>Không có quyền truy cập</h1>
+        <p th:text="${message}">Bạn không được phép thực hiện thao tác này.</p>
+        <a href="/products">← Quay về danh sách sản phẩm</a>
+    </div>
+</body>
+</html>

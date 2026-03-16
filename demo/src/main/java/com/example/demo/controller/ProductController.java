@@ -1,16 +1,23 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Category;
-import com.example.demo.model.Product;
-import com.example.demo.service.CategoryService;
-import com.example.demo.service.ProductService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.example.demo.model.Category;
+import com.example.demo.model.Product;
+import com.example.demo.service.CategoryService;
+import com.example.demo.service.ProductService;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/products")
@@ -83,7 +90,7 @@ public class ProductController {
             @RequestParam(value = "imageProduct", required = false) MultipartFile imageProduct,
             Model model) {
 
-        // 1. In lỗi ra Console nếu có (Để bạn biết tại sao nó không thèm Save)
+        // 1. In lỗi ra Console nếu có
         if (result.hasErrors()) {
             System.out.println(">>> LỖI VALIDATION KHI EDIT:");
             result.getAllErrors().forEach(err -> System.out.println("- " + err.getDefaultMessage()));
